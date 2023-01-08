@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int        @id @default(autoincrement())
+  email       String     @unique
+  name        String
+  phoneNumber String?    @unique
+  password    String
+  isActive    Boolean    @default(true)
+  latitude    String?
+  longitude   String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  customers   Customer[]
+  leads       Lead[]
+}
+
+model Customer {
+  id          Int      @id @default(autoincrement())
+  name        String
+  phoneNumber String   @unique
+  email       String?  @unique
+  pincode     String?
+  agent       User     @relation(fields: [agentId], references: [id])
+  agentId     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  leads       Lead[]
+  branch      Branch   @relation(fields: [branchId], references: [id])
+  branchId    Int
+}
+
+model District {
+  id           Int     @id @default(autoincrement())
+  districtName String
+  taluks       Taluk[]
+  isActive     Boolean @default(true)
+  leads        Lead[]
+  branch       Branch  @relation(fields: [branchId], references: [id])
+  branchId     Int
+}
+
+model Taluk {
+  id         Int      @id @default(autoincrement())
+  talukName  String
+  district   District @relation(fields: [districtId], references: [id])
+  districtId Int
+  isActive   Boolean  @default(true)
+  leads      Lead[]
+  branch     Branch   @relation(fields: [branchId], references: [id])
+  branchId   Int
+}
+
+model ProductCategory {
+  id           Int           @id @default(autoincrement())
+  categoryName String        @unique
+  isActive     Boolean       @default(true)
+  productTypes ProductType[]
+  leads        Lead[]
+}
+
+model ProductType {
+  id                Int             @id @default(autoincrement())
+  typeName          String          @unique
+  isActive          Boolean         @default(true)
+  productCategory   ProductCategory @relation(fields: [productCategoryId], references: [id])
+  productCategoryId Int
+  leads             Lead[]
+}
+
+model Status {
+  id         Int     @id @default(autoincrement())
+  statusName String  @unique
+  isActive   Boolean @default(true)
+  leads      Lead[]
+}
+
+model Lead {
+  id                Int             @id @default(autoincrement())
+  customer          Customer        @relation(fields: [customerId], references: [id])
+  customerId        Int
+  agent             User            @relation(fields: [agentId], references: [id])
+  agentId           Int
+  productCategory   ProductCategory @relation(fields: [productCategoryId], references: [id])
+  productCategoryId Int
+  productType       ProductType     @relation(fields: [productTypeId], references: [id])
+  productTypeId     Int
+  status            Status          @relation(fields: [statusId], references: [id])
+  statusId          Int
+  district          District        @relation(fields: [districtId], references: [id])
+  districtId        Int
+  taluk             Taluk           @relation(fields: [talukId], references: [id])
+  talukId           Int
+  branch            Branch          @relation(fields: [branchId], references: [id])
+  branchId          Int
+}
+
+model Branch {
+  id         Int        @id @default(autoincrement())
+  branchName String     @unique
+  branchCode String     @unique
+  districts  District[]
+  taluks     Taluk[]
+  customers  Customer[]
+  leads      Lead[]
+}
