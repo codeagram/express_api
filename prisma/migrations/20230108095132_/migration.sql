@@ -17,14 +17,18 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Customer" (
     "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
+    "fullName" TEXT NOT NULL,
     "phoneNumber" TEXT NOT NULL,
     "email" TEXT,
     "pincode" TEXT,
     "agentId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "address" TEXT NOT NULL,
+    "talukId" INTEGER NOT NULL,
+    "districtId" INTEGER NOT NULL,
     "branchId" INTEGER NOT NULL,
+    "isConverted" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Customer_pkey" PRIMARY KEY ("id")
 );
@@ -131,6 +135,12 @@ CREATE UNIQUE INDEX "Branch_branchCode_key" ON "Branch"("branchCode");
 
 -- AddForeignKey
 ALTER TABLE "Customer" ADD CONSTRAINT "Customer_agentId_fkey" FOREIGN KEY ("agentId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Customer" ADD CONSTRAINT "Customer_talukId_fkey" FOREIGN KEY ("talukId") REFERENCES "Taluk"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Customer" ADD CONSTRAINT "Customer_districtId_fkey" FOREIGN KEY ("districtId") REFERENCES "District"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Customer" ADD CONSTRAINT "Customer_branchId_fkey" FOREIGN KEY ("branchId") REFERENCES "Branch"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
