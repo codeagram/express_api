@@ -55,6 +55,7 @@ userRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 userRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let { email, fullName, phoneNumber, plainPassword, latitude, longitude } = req.body;
+        let qrCode = '';
         const saltRounds = 10;
         const password = (yield hashPassword(plainPassword, saltRounds)) || '';
         const newUser = yield prisma_1.default.user.create({
@@ -64,7 +65,8 @@ userRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 phoneNumber,
                 password,
                 latitude,
-                longitude
+                longitude,
+                qrCode
             }
         });
         const baseUrl = `${process.env.BASE_URL}/customers/register?aid=${newUser.id}`;

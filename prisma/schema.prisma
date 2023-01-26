@@ -21,7 +21,7 @@ model User {
   longitude   String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  qrCode      String
+  qrCode      String?    @unique
   customers   Customer[]
   leads       Lead[]
 }

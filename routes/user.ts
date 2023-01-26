@@ -55,6 +55,7 @@ userRouter.post("/", async (req, res) => {
 
     try {
         let { email, fullName, phoneNumber, plainPassword, latitude, longitude } = req.body;
+        let qrCode: string = '';
         const saltRounds = 10;
         const password:string = await hashPassword(plainPassword, saltRounds) || '';
         const newUser = await prisma.user.create(
@@ -65,7 +66,8 @@ userRouter.post("/", async (req, res) => {
                     phoneNumber,
                     password,
                     latitude,
-                    longitude
+                    longitude,
+                    qrCode
                 }
             }
         );
