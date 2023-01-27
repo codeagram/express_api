@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const prisma_1 = __importDefault(require("../prisma/prisma"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const customerRouter = express_1.default.Router();
 customerRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -35,7 +37,9 @@ customerRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 }));
 customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
+        let newCustomer;
         let { fullName, phoneNumber, email, aadharNumber, pincode, agentId, address, talukName } = req.body;
         if (email === '') {
             email = null;
@@ -57,49 +61,78 @@ customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
             });
             agentId = agent.id;
         }
-        const newCustomer = yield prisma_1.default.customer.create({
-            data: {
-                fullName,
-                phoneNumber,
-                email,
-                aadharNumber,
-                pincode,
-                address,
-                agent: {
-                    connect: {
-                        id: Number(agentId),
-                    }
-                },
-                taluk: {
-                    connect: {
-                        id: Number(taluk.id),
-                    }
-                },
-                district: {
-                    connect: {
-                        id: Number(taluk.district.id),
-                    }
-                },
-                branch: {
-                    connect: {
-                        id: Number(taluk.branch.id),
+        if ((_a = taluk.branch) === null || _a === void 0 ? void 0 : _a.id) {
+            newCustomer = yield prisma_1.default.customer.create({
+                data: {
+                    fullName,
+                    phoneNumber,
+                    email,
+                    aadharNumber,
+                    pincode,
+                    address,
+                    agent: {
+                        connect: {
+                            id: Number(agentId),
+                        }
+                    },
+                    taluk: {
+                        connect: {
+                            id: Number(taluk.id),
+                        }
+                    },
+                    district: {
+                        connect: {
+                            id: Number(taluk.district.id),
+                        }
+                    },
+                    branch: {
+                        connect: {
+                            id: Number(taluk.branch.id),
+                        }
                     }
                 }
-            }
-        });
-        console.log(newCustomer);
+            });
+        }
+        else {
+            newCustomer = yield prisma_1.default.customer.create({
+                data: {
+                    fullName,
+                    phoneNumber,
+                    email,
+                    aadharNumber,
+                    pincode,
+                    address,
+                    agent: {
+                        connect: {
+                            id: Number(agentId),
+                        }
+                    },
+                    taluk: {
+                        connect: {
+                            id: Number(taluk.id),
+                        }
+                    },
+                    district: {
+                        connect: {
+                            id: Number(taluk.district.id),
+                        }
+                    },
+                }
+            });
+        }
         if (email) {
+            const host = process.env.SMTP_HOST ? process.env.SMTP_HOST : 'localhost';
             const mailer = nodemailer_1.default.createTransport({
-                host: 'smtp.hostinger.com',
-                port: 465,
-                secure: true,
+                host: process.env.SMTP_HOST,
+                port: Number(process.env.SMTP_PORT),
+                secure: process.env.SMTP_SECURE === 'YES' ? true : false,
                 auth: {
-                    user: 'careers@surabhi.group',
-                    pass: '?ajiTU#b7H',
+                    user: process.env.SMTP_USERNAME,
+                    pass: process.env.SMTP_PASSWORD,
                 }
             });
             const mailOptions = {
-                from: 'careers@surabhi.group',
+                from: process.env.SMTP_USERNAME,
                 to: email,
                 subject: 'New Customer',
                 text: 'Customer Registration Successfull!'
