@@ -1,6 +1,9 @@
 import express from "express";
 import prisma from "../prisma/prisma";
 import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const customerRouter = express.Router();
 
@@ -29,6 +32,7 @@ customerRouter.get("/", async (req, res) => {
 
 customerRouter.post("/", async (req, res) => {
     try {
+        let newCustomer;
         let { fullName, phoneNumber, email, aadharNumber, pincode, agentId, address, talukName } = req.body;
         if (email === '') {
             email = null;
@@ -54,53 +58,82 @@ customerRouter.post("/", async (req, res) => {
             agentId = agent!.id
         }
 
-        const newCustomer = await prisma.customer.create({
-            data: {
-                fullName,
-                phoneNumber,
-                email,
-                aadharNumber,
-                pincode,
-                address,
-                agent: {
-                    connect: {
-                        id: Number(agentId),
-                    }
-                },
-                taluk: {
-                    connect: {
-                        id: Number(taluk!.id),
-                    }
-                },
-                district: {
-                    connect: {
-                        id: Number(taluk!.district.id),
-                    }
-                },
-                branch: {
-                    connect: {
-                        id: Number(taluk!.branch.id),
+        if (taluk!.branch?.id) {
+            newCustomer = await prisma.customer.create({
+                data: {
+                    fullName,
+                    phoneNumber,
+                    email,
+                    aadharNumber,
+                    pincode,
+                    address,
+                    agent: {
+                        connect: {
+                            id: Number(agentId),
+                        }
+                    },
+                    taluk: {
+                        connect: {
+                            id: Number(taluk!.id),
+                        }
+                    },
+                    district: {
+                        connect: {
+                            id: Number(taluk!.district.id),
+                        }
+                    },
+                    branch: {
+                        connect: {
+                            id: Number(taluk!.branch.id),
+                        }
                     }
                 }
-            }
-        });
+            });
+        } else {
+            newCustomer = await prisma.customer.create({
+                data: {
+                    fullName,
+                    phoneNumber,
+                    email,
+                    aadharNumber,
+                    pincode,
+                    address,
+                    agent: {
+                        connect: {
+                            id: Number(agentId),
+                        }
+                    },
+                    taluk: {
+                        connect: {
+                            id: Number(taluk!.id),
+                        }
+                    },
+                    district: {
+                        connect: {
+                            id: Number(taluk!.district.id),
+                        }
+                    },
+                }
+            });
+        }
 
-        console.log(newCustomer);
 
         if (email) {
 
+            const host: string = process.env.SMTP_HOST ? process.env.SMTP_HOST : 'localhost';
+
             const mailer = nodemailer.createTransport({
-                host: 'smtp.hostinger.com',
-                port: 465,
-                secure: true,
+                host: process.env.SMTP_HOST,
+                port: Number(process.env.SMTP_PORT),
+                secure: process.env.SMTP_SECURE === 'YES' ? true : false,
                 auth: {
-                    user: 'careers@surabhi.group',
-                    pass: '?ajiTU#b7H',
+                    user: process.env.SMTP_USERNAME,
+                    pass: process.env.SMTP_PASSWORD,
                 }
             });
 
             const mailOptions = {
-                from: 'careers@surabhi.group',
+                from: process.env.SMTP_USERNAME,
                 to: email,
                 subject: 'New Customer',
                 text: 'Customer Registration Successfull!'

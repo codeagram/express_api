@@ -43,8 +43,8 @@ model Customer {
   talukId      Int
   district     District @relation(fields: [districtId], references: [id])
   districtId   Int
-  branch       Branch   @relation(fields: [branchId], references: [id])
-  branchId     Int
+  branch       Branch?   @relation(fields: [branchId], references: [id])
+  branchId     Int?
   isConverted  Boolean  @default(false)
 }
 
@@ -64,8 +64,8 @@ model Taluk {
   districtId Int
   isActive   Boolean    @default(true)
   leads      Lead[]
-  branch     Branch     @relation(fields: [branchId], references: [id])
-  branchId   Int
+  branch     Branch?    @relation(fields: [branchId], references: [id])
+  branchId   Int?
   customers  Customer[]
 }
 
@@ -109,8 +109,8 @@ model Lead {
   districtId        Int
   taluk             Taluk           @relation(fields: [talukId], references: [id])
   talukId           Int
-  branch            Branch          @relation(fields: [branchId], references: [id])
-  branchId          Int
+  branch            Branch?         @relation(fields: [branchId], references: [id])
+  branchId          Int?
 }
 
 model Branch {

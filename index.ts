@@ -11,11 +11,13 @@ import customerRouter from './routes/customer';
 import districtRouter from './routes/district';
 import userRouter from './routes/user';
 import talukRouter from './routes/taluk';
+import dataRouter from './routes/data';
 
 app.use("/api/customers", customerRouter);
 app.use("/api/districts", districtRouter);
 app.use("/api/users", userRouter);
-app.use("/api/taluks", talukRouter);
+app.use("/api/taluk", talukRouter);
+app.use("/api/data", dataRouter);
 
 
 const PORT = 3000;
