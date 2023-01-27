@@ -18,7 +18,6 @@ const districtRouter = express_1.default.Router();
 districtRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const districts = yield prisma_1.default.district.findMany();
-        console.log(districts);
         res.json(districts);
     }
     catch (error) {
