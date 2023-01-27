@@ -56,6 +56,7 @@ userRouter.post("/", async (req, res) => {
     try {
         let { email, fullName, phoneNumber, plainPassword, latitude, longitude } = req.body;
         let qrCode: string = '';
+        
         const saltRounds = 10;
         const password:string = await hashPassword(plainPassword, saltRounds) || '';
         const newUser = await prisma.user.create(
@@ -71,12 +72,20 @@ userRouter.post("/", async (req, res) => {
                 }
             }
         );
-
         const baseUrl = `${process.env.BASE_URL}/customers/register?aid=${newUser.id}`;
         const qrUrl = `media/${newUser.id}.png`;
         generateQR(baseUrl, qrUrl);
 
-        res.status(201).json(newUser);
+        const user = await prisma.user.update({
+            where: {
+                id: newUser.id
+            },
+            data: {
+                qrCode: qrUrl
+            }
+        })
+
+        res.status(201).json(user);
     } catch (error) {
         console.log(error);
         res.status(500).json(
