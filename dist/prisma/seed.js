@@ -19,7 +19,7 @@ function main() {
                 { branchName: 'Mulanur', branchCode: '2MLR' },
                 { branchName: 'Pollachi', branchCode: '3POL' },
                 { branchName: 'Coimbatore', branchCode: '4CBE' },
-                { branchName: 'Tirupur', branchCode: '5TPE' },
+                { branchName: 'Tirupur', branchCode: '5TPR' },
                 { branchName: 'Erode', branchCode: '6ERD' },
                 { branchName: 'Dindigul', branchCode: '7DGL' },
                 { branchName: 'Karur', branchCode: '8KRR' }
@@ -90,7 +90,7 @@ function main() {
             ["Tondiarpet", "Chennai", null],
             ["Velacherry", "Chennai", null],
             ["Aanaimalai", "Coimbatore", "3POL"],
-            ["Annur", "Coimbatore"],
+            ["Annur", "Coimbatore", "4CBE"],
             ["Kinathukadavu", "Coimbatore", "3POL"],
             ["Madukarai", "Coimbatore", "4CBE"],
             ["Mettupalayam", "Coimbatore", "4CBE"],
@@ -247,7 +247,7 @@ function main() {
             ["Gummidipoondi", "Thiruvallur", null],
             ["Pallipattu", "Thiruvallur", null],
             ["Ponneri", "Thiruvallur", null],
-            ["Poonamallee"], "Thiruvallur", null,
+            ["Poonamallee", "Thiruvallur", null],
             ["R.K. Pet", "Thiruvallur", null],
             ["Tiruthani", "Thiruvallur", null],
             ["Uthukottai", "Thiruvallur", null],
@@ -386,42 +386,39 @@ function main() {
             ["Tiruppur South", "Tirupur", "5TPR"]
         ];
         for (let i = 0; i < taluks.length; i++) {
-            console.log(taluks[i]);
-            /*
-            let name: string = taluks[i][0] || '';
-            let district: string = taluks[i][1] || '';
-            let branch: string = taluks[i][2] || '';
-    
-            if (branch) {
-                await prisma.taluk.create({
+            const taluk = taluks[i];
+            const name = taluk[0];
+            const districtName = taluk[1];
+            const branchCode = taluk[2] !== null ? taluk[2] : "none";
+            if (branchCode !== "none") {
+                yield prisma.taluk.create({
                     data: {
                         talukName: name,
+                        district: {
+                            connect: {
+                                districtName: districtName
+                            }
+                        },
                         branch: {
                             connect: {
-                                branchCode: branch
+                                branchCode: branchCode
                             }
-                        },
-                        district: {
-                            connect: {
-                                districtName: district
-                            }
-                        },
-                    },
-                })
-                continue;
-            } else {
-    
-                await prisma.taluk.create({
+                        }
+                    }
+                });
+            }
+            else {
+                yield prisma.taluk.create({
                     data: {
                         talukName: name,
                         district: {
                             connect: {
-                                districtName: district
+                                districtName: districtName
                             }
-                        },
-                    },
-                })
-            }*/
+                        }
+                    }
+                });
+            }
         }
     });
 }

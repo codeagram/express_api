@@ -18,7 +18,7 @@ const data_1 = __importDefault(require("./routes/data"));
 app.use("/api/customers", customer_1.default);
 app.use("/api/districts", district_1.default);
 app.use("/api/users", user_1.default);
-app.use("/api/taluk", taluk_1.default);
+app.use("/api/taluks", taluk_1.default);
 app.use("/api/data", data_1.default);
 const PORT = 3000;
 app.listen(PORT, () => console.log(`App Listens on Port ${PORT}`));
