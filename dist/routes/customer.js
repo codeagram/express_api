@@ -70,6 +70,8 @@ customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
                     aadharNumber,
                     pincode,
                     address,
+                    register_latitude: latitude,
+                    register_longitude: longitude,
                     agent: {
                         connect: {
                             id: Number(agentId),
@@ -89,7 +91,7 @@ customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
                         connect: {
                             id: Number(taluk.branch.id),
                         }
-                    }
+                    },
                 }
             });
         }
@@ -102,6 +104,8 @@ customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
                     aadharNumber,
                     pincode,
                     address,
+                    register_latitude: latitude,
+                    register_longitude: longitude,
                     agent: {
                         connect: {
                             id: Number(agentId),

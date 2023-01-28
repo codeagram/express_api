@@ -67,6 +67,8 @@ customerRouter.post("/", async (req, res) => {
                     aadharNumber,
                     pincode,
                     address,
+                    register_latitude: latitude,
+                    register_longitude: longitude,
                     agent: {
                         connect: {
                             id: Number(agentId),
@@ -87,8 +89,6 @@ customerRouter.post("/", async (req, res) => {
                             id: Number(taluk!.branch.id),
                         }
                     },
-                    register_latitude: parseFloat(latitude),
-                    register_longitude: parseFloat(longitude)
 
                 }
             });
@@ -101,6 +101,8 @@ customerRouter.post("/", async (req, res) => {
                     aadharNumber,
                     pincode,
                     address,
+                    register_latitude: latitude,
+                    register_longitude: longitude,
                     agent: {
                         connect: {
                             id: Number(agentId),

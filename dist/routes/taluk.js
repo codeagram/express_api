@@ -16,14 +16,36 @@ const express_1 = __importDefault(require("express"));
 const prisma_1 = __importDefault(require("../prisma/prisma"));
 const talukRouter = express_1.default.Router();
 talukRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const taluks = yield prisma_1.default.taluk.findMany();
-        res.json(taluks);
+    if (req.query.district) {
+        try {
+            const districtName = req.query.district;
+            const district = yield prisma_1.default.district.findUnique({
+                where: {
+                    districtName: districtName,
+                }
+            });
+            console.log(district);
+            const taluks = yield prisma_1.default.taluk.findMany({
+                where: {
+                    districtId: district === null || district === void 0 ? void 0 : district.id
+                }
+            });
+            res.json(taluks);
+        }
+        catch (error) {
+            res.status(500).json(error);
+        }
     }
-    catch (error) {
-        res.status(500).json({
-            message: "Internal Server Error"
-        });
+    else {
+        try {
+            const taluks = yield prisma_1.default.taluk.findMany();
+            res.json(taluks);
+        }
+        catch (error) {
+            res.status(500).json({
+                message: "Internal Server Error"
+            });
+        }
     }
 }));
 exports.default = talukRouter;

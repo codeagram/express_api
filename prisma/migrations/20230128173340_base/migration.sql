@@ -10,6 +10,7 @@ CREATE TABLE "User" (
     "longitude" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "qrCode" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -20,15 +21,18 @@ CREATE TABLE "Customer" (
     "fullName" TEXT NOT NULL,
     "phoneNumber" TEXT NOT NULL,
     "email" TEXT,
-    "pincode" TEXT,
+    "aadharNumber" TEXT,
+    "pincode" TEXT NOT NULL,
     "agentId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "address" TEXT NOT NULL,
     "talukId" INTEGER NOT NULL,
     "districtId" INTEGER NOT NULL,
-    "branchId" INTEGER NOT NULL,
+    "branchId" INTEGER,
     "isConverted" BOOLEAN NOT NULL DEFAULT false,
+    "register_latitude" TEXT NOT NULL,
+    "register_longitude" TEXT NOT NULL,
 
     CONSTRAINT "Customer_pkey" PRIMARY KEY ("id")
 );
@@ -38,7 +42,6 @@ CREATE TABLE "District" (
     "id" SERIAL NOT NULL,
     "districtName" TEXT NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "branchId" INTEGER NOT NULL,
 
     CONSTRAINT "District_pkey" PRIMARY KEY ("id")
 );
@@ -49,7 +52,7 @@ CREATE TABLE "Taluk" (
     "talukName" TEXT NOT NULL,
     "districtId" INTEGER NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "branchId" INTEGER NOT NULL,
+    "branchId" INTEGER,
 
     CONSTRAINT "Taluk_pkey" PRIMARY KEY ("id")
 );
@@ -92,7 +95,7 @@ CREATE TABLE "Lead" (
     "statusId" INTEGER NOT NULL,
     "districtId" INTEGER NOT NULL,
     "talukId" INTEGER NOT NULL,
-    "branchId" INTEGER NOT NULL,
+    "branchId" INTEGER,
 
     CONSTRAINT "Lead_pkey" PRIMARY KEY ("id")
 );
@@ -113,10 +116,22 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "User_phoneNumber_key" ON "User"("phoneNumber");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_qrCode_key" ON "User"("qrCode");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Customer_phoneNumber_key" ON "Customer"("phoneNumber");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Customer_email_key" ON "Customer"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Customer_aadharNumber_key" ON "Customer"("aadharNumber");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "District_districtName_key" ON "District"("districtName");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Taluk_talukName_key" ON "Taluk"("talukName");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ProductCategory_categoryName_key" ON "ProductCategory"("categoryName");
@@ -143,16 +158,13 @@ ALTER TABLE "Customer" ADD CONSTRAINT "Customer_talukId_fkey" FOREIGN KEY ("talu
 ALTER TABLE "Customer" ADD CONSTRAINT "Customer_districtId_fkey" FOREIGN KEY ("districtId") REFERENCES "District"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Customer" ADD CONSTRAINT "Customer_branchId_fkey" FOREIGN KEY ("branchId") REFERENCES "Branch"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "District" ADD CONSTRAINT "District_branchId_fkey" FOREIGN KEY ("branchId") REFERENCES "Branch"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Customer" ADD CONSTRAINT "Customer_branchId_fkey" FOREIGN KEY ("branchId") REFERENCES "Branch"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Taluk" ADD CONSTRAINT "Taluk_districtId_fkey" FOREIGN KEY ("districtId") REFERENCES "District"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Taluk" ADD CONSTRAINT "Taluk_branchId_fkey" FOREIGN KEY ("branchId") REFERENCES "Branch"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Taluk" ADD CONSTRAINT "Taluk_branchId_fkey" FOREIGN KEY ("branchId") REFERENCES "Branch"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ProductType" ADD CONSTRAINT "ProductType_productCategoryId_fkey" FOREIGN KEY ("productCategoryId") REFERENCES "ProductCategory"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -179,4 +191,4 @@ ALTER TABLE "Lead" ADD CONSTRAINT "Lead_districtId_fkey" FOREIGN KEY ("districtI
 ALTER TABLE "Lead" ADD CONSTRAINT "Lead_talukId_fkey" FOREIGN KEY ("talukId") REFERENCES "Taluk"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Lead" ADD CONSTRAINT "Lead_branchId_fkey" FOREIGN KEY ("branchId") REFERENCES "Branch"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Lead" ADD CONSTRAINT "Lead_branchId_fkey" FOREIGN KEY ("branchId") REFERENCES "Branch"("id") ON DELETE SET NULL ON UPDATE CASCADE;

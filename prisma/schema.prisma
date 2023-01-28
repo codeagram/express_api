@@ -31,8 +31,8 @@ model Customer {
   fullName           String
   phoneNumber        String   @unique
   email              String?  @unique
-  aadharNumber       String   @unique
-  pincode            String?
+  aadharNumber       String?  @unique
+  pincode            String
   agent              User     @relation(fields: [agentId], references: [id])
   agentId            Int
   createdAt          DateTime @default(now())
@@ -46,8 +46,8 @@ model Customer {
   branch             Branch?  @relation(fields: [branchId], references: [id])
   branchId           Int?
   isConverted        Boolean  @default(false)
-  register_latitude  Float
-  register_longitude Float
+  register_latitude  String
+  register_longitude String
 }
 
 model District {
