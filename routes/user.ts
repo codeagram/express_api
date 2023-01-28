@@ -1,18 +1,48 @@
 import express from "express";
+import util from 'util';
 import prisma from "../prisma/prisma";
-import qr from 'qrcode';
+import * as qrcode from 'qrcode';
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
+import * as cloudinary from 'cloudinary'
+import streamifier from 'streamifier';
+
 
 dotenv.config();
+
+
+cloudinary.v2.config(
+    {
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+        secure: true
+    }
+);
 
 const userRouter = express.Router();
 
 
-const generateQR = async (url: string, filepath: string): Promise<void> => {
-    await qr.toFile(filepath, url);
-};
+const generateQR = async (data: string): Promise<Buffer> => {
+    return await qrcode.toBuffer(data);
+}
 
+const streamUpload = async (buffer: Buffer, folder: string, publicId: string) => {
+    return new Promise((resolve, reject) => {
+        let stream = cloudinary.v2.uploader.upload_stream(
+            { folder: folder, public_id: publicId },
+            (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result?.secure_url);
+                }
+            }
+        );
+
+        streamifier.createReadStream(buffer).pipe(stream);
+    });
+}
 
 const hashPassword = async (password: string, saltRounds: number) => {
     try {
@@ -55,10 +85,9 @@ userRouter.post("/", async (req, res) => {
 
     try {
         let { email, fullName, phoneNumber, plainPassword, latitude, longitude } = req.body;
-        let qrCode: string = '';
-        
+
         const saltRounds = 10;
-        const password:string = await hashPassword(plainPassword, saltRounds) || '';
+        const password: string = await hashPassword(plainPassword, saltRounds) || '';
         const newUser = await prisma.user.create(
             {
                 data: {
@@ -68,20 +97,19 @@ userRouter.post("/", async (req, res) => {
                     password,
                     latitude,
                     longitude,
-                    qrCode
                 }
             }
         );
         const baseUrl = `${process.env.BASE_URL}/customers/register?aid=${newUser.id}`;
-        const qrUrl = `media/${newUser.id}.png`;
-        generateQR(baseUrl, qrUrl);
-
+        const q = await generateQR(baseUrl);
+        const secure_url: any = await streamUpload(q, "QR-Code", `${newUser.id}-${newUser.email}`);
+        
         const user = await prisma.user.update({
             where: {
                 id: newUser.id
             },
             data: {
-                qrCode: qrUrl
+                qrCode: secure_url
             }
         })
 

@@ -40,7 +40,7 @@ customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
     var _a;
     try {
         let newCustomer;
-        let { fullName, phoneNumber, email, aadharNumber, pincode, agentId, address, talukName } = req.body;
+        let { fullName, phoneNumber, email, aadharNumber, pincode, agentId, address, talukName, latitude, longitude } = req.body;
         if (email === '') {
             email = null;
         }

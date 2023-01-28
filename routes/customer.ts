@@ -33,7 +33,7 @@ customerRouter.get("/", async (req, res) => {
 customerRouter.post("/", async (req, res) => {
     try {
         let newCustomer;
-        let { fullName, phoneNumber, email, aadharNumber, pincode, agentId, address, talukName } = req.body;
+        let { fullName, phoneNumber, email, aadharNumber, pincode, agentId, address, talukName, latitude, longitude } = req.body;
         if (email === '') {
             email = null;
         }
@@ -86,7 +86,10 @@ customerRouter.post("/", async (req, res) => {
                         connect: {
                             id: Number(taluk!.branch.id),
                         }
-                    }
+                    },
+                    register_latitude: parseFloat(latitude),
+                    register_longitude: parseFloat(longitude)
+
                 }
             });
         } else {
