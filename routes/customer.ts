@@ -80,6 +80,12 @@ customerRouter.post("/", async (req, res) => {
         });
 
 
+        const agent = await prisma.user.findFirst({
+            where: {
+                id: agentId
+            }
+        });
+
         if (email) {
 
             const mailer = nodemailer.createTransport({
@@ -96,7 +102,7 @@ customerRouter.post("/", async (req, res) => {
                 from: process.env.SMTP_USERNAME,
                 to: email,
                 subject: 'New Customer',
-                text: `Customer Registration Successfull!\n\nEntered Details:\nFull Name: ${fullName}\nPhone Number: ${phoneNumber}\nAadhar Number: ${aadharNumber}\nEmail: ${email}\nDistrict: ${taluk!.district?.districtName}\nBranch: ${taluk!.branch?.branchCode}\nTaluk: ${taluk}\nLatitude: ${latitude}\nLongitude: ${longitude}`
+                text: `Customer Registration Successfull!\n\nEntered Details:\nFull Name: ${fullName}\nPhone Number: ${phoneNumber}\nAadhar Number: ${aadharNumber}\nEmail: ${email}\nAddress: ${address}\nDistrict: ${taluk!.district?.districtName}\nBranch: ${taluk!.branch?.branchCode}\nTaluk: ${taluk}\nPincode: ${pincode}\nAgent: ${agent?.fullName}\nLatitude: ${latitude}\nLongitude: ${longitude}`
             };
 
             mailer.sendMail(mailOptions);
