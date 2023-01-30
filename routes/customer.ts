@@ -13,9 +13,7 @@ customerRouter.get("/", async (req, res) => {
             {
                 include: {
                     agent: true,
-                    branch: true,
                     taluk: true,
-                    district: true
                 }
             }
         );
@@ -41,10 +39,6 @@ customerRouter.post("/", async (req, res) => {
         const taluk = await prisma.taluk.findFirst({
             where: {
                 talukName: talukName,
-            },
-            include: {
-                branch: true,
-                district: true
             }
         })
 
@@ -58,74 +52,31 @@ customerRouter.post("/", async (req, res) => {
             agentId = agent!.id
         }
 
-        if (taluk!.branch?.id) {
-            newCustomer = await prisma.customer.create({
-                data: {
-                    fullName,
-                    phoneNumber,
-                    email,
-                    aadharNumber,
-                    pincode,
-                    address,
-                    register_latitude: latitude,
-                    register_longitude: longitude,
-                    agent: {
-                        connect: {
-                            id: Number(agentId),
-                        }
-                    },
-                    taluk: {
-                        connect: {
-                            id: Number(taluk!.id),
-                        }
-                    },
-                    district: {
-                        connect: {
-                            id: Number(taluk!.district.id),
-                        }
-                    },
-                    branch: {
-                        connect: {
-                            id: Number(taluk!.branch.id),
-                        }
-                    },
-
+        newCustomer = await prisma.customer.create({
+            data: {
+                fullName,
+                phoneNumber,
+                email,
+                aadharNumber,
+                pincode,
+                address,
+                register_latitude: latitude,
+                register_longitude: longitude,
+                agent: {
+                    connect: {
+                        id: Number(agentId),
+                    }
+                },
+                taluk: {
+                    connect: {
+                        id: Number(taluk!.id),
+                    }
                 }
-            });
-        } else {
-            newCustomer = await prisma.customer.create({
-                data: {
-                    fullName,
-                    phoneNumber,
-                    email,
-                    aadharNumber,
-                    pincode,
-                    address,
-                    register_latitude: latitude,
-                    register_longitude: longitude,
-                    agent: {
-                        connect: {
-                            id: Number(agentId),
-                        }
-                    },
-                    taluk: {
-                        connect: {
-                            id: Number(taluk!.id),
-                        }
-                    },
-                    district: {
-                        connect: {
-                            id: Number(taluk!.district.id),
-                        }
-                    },
-                }
-            });
-        }
+            }
+        });
 
 
         if (email) {
-
-            const host: string = process.env.SMTP_HOST ? process.env.SMTP_HOST : 'localhost';
 
             const mailer = nodemailer.createTransport({
                 host: process.env.SMTP_HOST,

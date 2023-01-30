@@ -41,10 +41,6 @@ model Customer {
   address            String
   taluk              Taluk    @relation(fields: [talukId], references: [id])
   talukId            Int
-  district           District @relation(fields: [districtId], references: [id])
-  districtId         Int
-  branch             Branch?  @relation(fields: [branchId], references: [id])
-  branchId           Int?
   isConverted        Boolean  @default(false)
   register_latitude  String
   register_longitude String
@@ -56,7 +52,6 @@ model District {
   taluks       Taluk[]
   isActive     Boolean    @default(true)
   leads        Lead[]
-  customers    Customer[]
 }
 
 model Taluk {
@@ -120,6 +115,5 @@ model Branch {
   branchName String     @unique
   branchCode String     @unique
   taluks     Taluk[]
-  customers  Customer[]
   leads      Lead[]
 }

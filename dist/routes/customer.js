@@ -23,9 +23,7 @@ customerRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function
         const customers = yield prisma_1.default.customer.findMany({
             include: {
                 agent: true,
-                branch: true,
                 taluk: true,
-                district: true
             }
         });
         res.json(customers);
@@ -37,7 +35,6 @@ customerRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 }));
 customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     try {
         let newCustomer;
         let { fullName, phoneNumber, email, aadharNumber, pincode, agentId, address, talukName, latitude, longitude } = req.body;
@@ -47,10 +44,6 @@ customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
         const taluk = yield prisma_1.default.taluk.findFirst({
             where: {
                 talukName: talukName,
-            },
-            include: {
-                branch: true,
-                district: true
             }
         });
         if (agentId == "0") {
@@ -61,71 +54,29 @@ customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
             });
             agentId = agent.id;
         }
-        if ((_a = taluk.branch) === null || _a === void 0 ? void 0 : _a.id) {
-            newCustomer = yield prisma_1.default.customer.create({
-                data: {
-                    fullName,
-                    phoneNumber,
-                    email,
-                    aadharNumber,
-                    pincode,
-                    address,
-                    register_latitude: latitude,
-                    register_longitude: longitude,
-                    agent: {
-                        connect: {
-                            id: Number(agentId),
-                        }
-                    },
-                    taluk: {
-                        connect: {
-                            id: Number(taluk.id),
-                        }
-                    },
-                    district: {
-                        connect: {
-                            id: Number(taluk.district.id),
-                        }
-                    },
-                    branch: {
-                        connect: {
-                            id: Number(taluk.branch.id),
-                        }
-                    },
+        newCustomer = yield prisma_1.default.customer.create({
+            data: {
+                fullName,
+                phoneNumber,
+                email,
+                aadharNumber,
+                pincode,
+                address,
+                register_latitude: latitude,
+                register_longitude: longitude,
+                agent: {
+                    connect: {
+                        id: Number(agentId),
+                    }
+                },
+                taluk: {
+                    connect: {
+                        id: Number(taluk.id),
+                    }
                 }
-            });
-        }
-        else {
-            newCustomer = yield prisma_1.default.customer.create({
-                data: {
-                    fullName,
-                    phoneNumber,
-                    email,
-                    aadharNumber,
-                    pincode,
-                    address,
-                    register_latitude: latitude,
-                    register_longitude: longitude,
-                    agent: {
-                        connect: {
-                            id: Number(agentId),
-                        }
-                    },
-                    taluk: {
-                        connect: {
-                            id: Number(taluk.id),
-                        }
-                    },
-                    district: {
-                        connect: {
-                            id: Number(taluk.district.id),
-                        }
-                    },
-                }
-            });
-        }
+            }
+        });
         if (email) {
-            const host = process.env.SMTP_HOST ? process.env.SMTP_HOST : 'localhost';
             const mailer = nodemailer_1.default.createTransport({
                 host: process.env.SMTP_HOST,
                 port: Number(process.env.SMTP_PORT),
