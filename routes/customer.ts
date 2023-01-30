@@ -68,12 +68,12 @@ customerRouter.post("/", async (req, res) => {
                 register_longitude: longitude,
                 agent: {
                     connect: {
-                        id: Number(agentId),
+                        id: parseInt(agentId),
                     }
                 },
                 taluk: {
                     connect: {
-                        id: Number(taluk!.id),
+                        id: taluk!.id,
                     }
                 }
             }

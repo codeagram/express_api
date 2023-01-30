@@ -71,12 +71,12 @@ customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
                 register_longitude: longitude,
                 agent: {
                     connect: {
-                        id: Number(agentId),
+                        id: parseInt(agentId),
                     }
                 },
                 taluk: {
                     connect: {
-                        id: Number(taluk.id),
+                        id: taluk.id,
                     }
                 }
             }
