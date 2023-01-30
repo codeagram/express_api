@@ -35,6 +35,7 @@ customerRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 }));
 customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     try {
         let newCustomer;
         let { fullName, phoneNumber, email, aadharNumber, pincode, agentId, address, talukName, latitude, longitude } = req.body;
@@ -44,6 +45,10 @@ customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
         const taluk = yield prisma_1.default.taluk.findFirst({
             where: {
                 talukName: talukName,
+            },
+            include: {
+                branch: true,
+                district: true
             }
         });
         if (agentId == "0") {
@@ -90,9 +95,9 @@ customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
                 from: process.env.SMTP_USERNAME,
                 to: email,
                 subject: 'New Customer',
-                text: 'Customer Registration Successfull!'
+                text: `Customer Registration Successfull!\n\nEntered Details:\nFull Name: ${fullName}\nPhone Number: ${phoneNumber}\nAadhar Number: ${aadharNumber}\nEmail: ${email}\nDistrict: ${(_a = taluk.district) === null || _a === void 0 ? void 0 : _a.districtName}\nBranch: ${(_b = taluk.branch) === null || _b === void 0 ? void 0 : _b.branchCode}\nTaluk: ${taluk}\nLatitude: ${latitude}\nLongitude: ${longitude}`
             };
-            const info = yield mailer.sendMail(mailOptions);
+            mailer.sendMail(mailOptions);
         }
         res.status(201).json({
             status: 'success',

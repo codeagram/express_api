@@ -39,6 +39,10 @@ customerRouter.post("/", async (req, res) => {
         const taluk = await prisma.taluk.findFirst({
             where: {
                 talukName: talukName,
+            },
+            include: {
+                branch: true,
+                district: true
             }
         })
 
@@ -92,10 +96,10 @@ customerRouter.post("/", async (req, res) => {
                 from: process.env.SMTP_USERNAME,
                 to: email,
                 subject: 'New Customer',
-                text: 'Customer Registration Successfull!'
+                text: `Customer Registration Successfull!\n\nEntered Details:\nFull Name: ${fullName}\nPhone Number: ${phoneNumber}\nAadhar Number: ${aadharNumber}\nEmail: ${email}\nDistrict: ${taluk!.district?.districtName}\nBranch: ${taluk!.branch?.branchCode}\nTaluk: ${taluk}\nLatitude: ${latitude}\nLongitude: ${longitude}`
             };
 
-            const info = await mailer.sendMail(mailOptions);
+            mailer.sendMail(mailOptions);
         }
         res.status(201).json({
             status: 'success',
