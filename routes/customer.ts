@@ -68,7 +68,7 @@ customerRouter.post("/", async (req, res) => {
                 register_longitude: longitude,
                 agent: {
                     connect: {
-                        id: parseInt(agentId),
+                        id: Number(agentId),
                     }
                 },
                 taluk: {
@@ -82,7 +82,7 @@ customerRouter.post("/", async (req, res) => {
 
         const agent = await prisma.user.findFirst({
             where: {
-                id: agentId
+                id: Number(agentId)
             }
         });
 

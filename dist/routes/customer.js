@@ -71,7 +71,7 @@ customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
                 register_longitude: longitude,
                 agent: {
                     connect: {
-                        id: parseInt(agentId),
+                        id: Number(agentId),
                     }
                 },
                 taluk: {
@@ -83,7 +83,7 @@ customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
         });
         const agent = yield prisma_1.default.user.findFirst({
             where: {
-                id: agentId
+                id: Number(agentId)
             }
         });
         if (email) {
