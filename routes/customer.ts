@@ -13,7 +13,12 @@ customerRouter.get("/", async (req, res) => {
             {
                 include: {
                     agent: true,
-                    taluk: true,
+                    taluk: {
+                        include: {
+                            district: true,
+                            branch: true
+                        }
+                    }
                 }
             }
         );
