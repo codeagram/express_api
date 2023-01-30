@@ -100,7 +100,7 @@ customerRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, functio
                 from: process.env.SMTP_USERNAME,
                 to: email,
                 subject: 'New Customer',
-                text: `Customer Registration Successfull!\n\nEntered Details:\nFull Name: ${fullName}\nPhone Number: ${phoneNumber}\nAadhar Number: ${aadharNumber}\nEmail: ${email}\nAddress: ${address}\nDistrict: ${(_a = taluk.district) === null || _a === void 0 ? void 0 : _a.districtName}\nBranch: ${(_b = taluk.branch) === null || _b === void 0 ? void 0 : _b.branchCode}\nTaluk: ${taluk}\nPincode: ${pincode}\nAgent: ${agent === null || agent === void 0 ? void 0 : agent.fullName}\nLatitude: ${latitude}\nLongitude: ${longitude}`
+                text: `Customer Registration Successfull!\n\nEntered Details:\nFull Name: ${fullName}\nPhone Number: ${phoneNumber}\nAadhar Number: ${aadharNumber}\nEmail: ${email}\nAddress: ${address}\nDistrict: ${(_a = taluk.district) === null || _a === void 0 ? void 0 : _a.districtName}\nBranch: ${(_b = taluk.branch) === null || _b === void 0 ? void 0 : _b.branchCode}\nTaluk: ${taluk === null || taluk === void 0 ? void 0 : taluk.talukName}\nPincode: ${pincode}\nAgent: ${agent === null || agent === void 0 ? void 0 : agent.fullName}\nLatitude: ${latitude}\nLongitude: ${longitude}`
             };
             mailer.sendMail(mailOptions);
         }
