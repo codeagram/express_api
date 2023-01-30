@@ -417,7 +417,6 @@ async function main() {
             })
         }
     }
-
 }
 
 main()
