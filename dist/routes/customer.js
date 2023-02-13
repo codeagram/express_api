@@ -23,7 +23,12 @@ customerRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function
         const customers = yield prisma_1.default.customer.findMany({
             include: {
                 agent: true,
-                taluk: true,
+                taluk: {
+                    include: {
+                        district: true,
+                        branch: true
+                    }
+                }
             }
         });
         res.json(customers);

@@ -23,3 +23,55 @@ Rest Compliance
 Analytics
 Continuous integration and deployment
 Rate Limiting
+
+
+PROJECT STRUCTURE
+
+/Config
+/dist
+/node_modules
+/lib
+    /Auth
+        /controllers
+            createAuthToken.ts
+            removeAuthToken.ts
+            resetPassword.ts
+        /routes
+            auth.ts
+        /utils
+    /Branch
+    /Customer
+        /Config
+        /Controllers
+            DeleteCustomer.ts
+            GetCustomer.ts
+            PatchCustomer.ts
+            PostCustomer.ts
+        /Models
+            schema.prisma
+        /Routes
+            login.ts
+            logout.ts
+        /Repositories
+        /Utils
+        Router.ts
+    /District
+    /Lead
+    /ProductCategory
+    /ProductType
+    /Status
+    /Taluk
+    /User
+    App.ts
+    Router.ts
+/prisma
+    /migrations
+    prisma.ts
+    schema.prisma
+/services
+    emailService.ts
+.env
+.gitignore
+server.ts
+package.json
+tsconfig.json

@@ -103,7 +103,7 @@ userRouter.post("/", async (req, res) => {
         const baseUrl = `${process.env.BASE_URL}/customers/register?aid=${newUser.id}`;
         const q = await generateQR(baseUrl);
         const secure_url: any = await streamUpload(q, "QR-Code", `${newUser.id}-${newUser.email}`);
-        
+
         const user = await prisma.user.update({
             where: {
                 id: newUser.id
